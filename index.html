@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbuToys Invoice Maker</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* Naya CSS - Preview niche lane ke liye */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .form-section {
+            order: 1;
+        }
+        .preview-section {
+            order: 2;
+        }
+        @media (min-width: 1200px) {
+            .main-content {
+                flex-direction: row;
+            }
+            .form-section {
+                flex: 1;
+            }
+            .preview-section {
+                flex: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧸 AbuToys Invoice Maker</h1>
+            <p>Fill in the details and generate invoice instantly</p>
+        </div>
+
+        <div class="main-content" id="mainContent">
+            <div class="form-section">
+                <h2>Invoice Details</h2>
+
+                <form id="invoiceForm">
+                    <div class="form-group">
+                        <label>Date:</label>
+                        <input type="text" id="invoiceDate" placeholder="Dec 15, 2025" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Order Code:</label>
+                        <input type="text" id="orderCode" placeholder="Abu8686Toys" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Invoice No:</label>
+                        <input type="text" id="invoiceNo" placeholder="INV-2025-001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Customer Name:</label>
+                        <input type="text" id="customerName" placeholder="Salik" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Phone:</label>
+                        <input type="text" id="customerPhone" placeholder="7069331760" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email:</label>
+                        <input type="email" id="customerEmail" placeholder="salikshaikh278@gmail.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Address:</label>
+                        <input type="text" id="customerAddress" placeholder="1149, Nagina Pole, Shahpur, Ahmedabad, 380001" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Toy Name:</label>
+                        <input type="text" id="toyName" placeholder="RC Sport Car" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Quantity:</label>
+                        <input type="number" id="quantity" placeholder="1" min="1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rate (₹):</label>
+                        <input type="number" id="rate" placeholder="449" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Dispatch Charge (₹):</label>
+                        <input type="number" id="dispatchCharge" placeholder="1127" min="0" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Transaction ID:</label>
+                        <input type="text" id="transactionId" placeholder="CICAO7MZP3X9" required>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="button" class="btn btn-download" onclick="downloadInvoice()">📥 Download Invoice</button>
+                        <button type="button" class="btn btn-history" onclick="showHistory()">📋 View History</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="preview-section">
+                <h2>Invoice Preview</h2>
+                <div class="invoice-preview">
+                    <canvas id="invoiceCanvas"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- History section same rahegi -->
+        <div class="history-section" id="historySection">
+            <button class="btn-back" onclick="hideHistory()">← Back</button>
+            <h2>Invoice History</h2>
+            <div class="history-grid" id="historyGrid"></div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+</body>
+</html>
