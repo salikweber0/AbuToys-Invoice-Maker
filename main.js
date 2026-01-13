@@ -12,9 +12,20 @@ document.getElementById('invoiceDate').value = formattedDate;
 
 templateImage.src = 'AbuToys Invoice maker.png';
 
+// ✅ Pehle image load ho
 templateImage.onload = function() {
     generateInvoicePreview();
+    // ✅ Image load hone ke BAAD font load karo
+    loadFonts();
 };
+
+// Font load karne ka function
+async function loadFonts() {
+    const font = new FontFace('Montserrat', 'url(https://fonts.gstatic.com/s/montserrat/v25/JTUHjIg1_i6t8kCHKm4532VJOt5-QNFgpCtr6Ew-.woff2)');
+    await font.load();
+    document.fonts.add(font);
+    generateInvoicePreview(); // Font load hone ke baad dubara generate
+}
 
 document.querySelectorAll('input').forEach(input => {
     input.addEventListener('input', generateInvoicePreview);
@@ -31,14 +42,15 @@ function generateInvoicePreview() {
     // Date - exactly under "Date:"
     const dateValue = document.getElementById('invoiceDate').value;
     if (dateValue) {
-        ctx.font = '24px Arial';
+        ctx.font = '24px Montserrat';
+        ctx.fillStyle = '#163d44';
         ctx.fillText(dateValue, 830, 380);
     }
 
     // Order Code - Red, Bold
     const orderCode = document.getElementById('orderCode').value;
     if (orderCode) {
-        ctx.font = 'bold 26px Arial';
+        ctx.font = 'bold 26px Montserrat';
         ctx.fillStyle = '#ff5757';
         ctx.fillText(orderCode, 830, 450);
         ctx.fillStyle = '#163d44';
@@ -47,7 +59,7 @@ function generateInvoicePreview() {
     // Invoice No
     const invoiceNo = document.getElementById('invoiceNo').value;
     if (invoiceNo) {
-        ctx.font = '24px Arial';
+        ctx.font = '24px Montserrat';
         ctx.fillText(invoiceNo, 830, 520);
     }
 
@@ -57,116 +69,141 @@ function generateInvoicePreview() {
     // Customer Name - Bold & Big
     const customerName = document.getElementById('customerName').value;
     if (customerName) {
-        ctx.font = 'bold 30px Arial';
+        ctx.font = 'bold 30px Montserrat';
         ctx.fillText(customerName, 95, 395);
     }
 
     // Phone
     const customerPhone = document.getElementById('customerPhone').value;
     if (customerPhone) {
-        ctx.font = '26px Arial';
+        ctx.font = '26px Montserrat';
         ctx.fillText(customerPhone, 95, 430);
     }
 
     // Email
     const customerEmail = document.getElementById('customerEmail').value;
     if (customerEmail) {
-        ctx.font = '26px Arial';
+        ctx.font = '26px Montserrat';
         ctx.fillText(customerEmail, 95, 460);
     }
 
     // Address (multi-line)
     const customerAddress = document.getElementById('customerAddress').value;
     if (customerAddress) {
-        ctx.font = '26px Arial';
+        ctx.font = '26px Montserrat';
         const lines = wrapText(customerAddress, 480);
         lines.forEach((line, i) => {
             ctx.fillText(line, 95, 490 + i * 38);
         });
     }
 
-    // === TABLE ===
-    ctx.textAlign = 'center';
+   // === TABLE ===
+ctx.textAlign = 'center';
 
-    // Toy Name
-    const toyName = document.getElementById('toyName').value;
-    if (toyName) {
-        ctx.font = '26px Arial';
-        ctx.fillText(toyName, 240, 685);
-    }
+// Toy Name
+const toyName = document.getElementById('toyName').value;
+if (toyName) {
+    ctx.font = '26px Montserrat';
+    ctx.fillText(toyName, 240, 685);
+}
 
-    // Quantity
-    const qty = parseFloat(document.getElementById('quantity').value) || 0;
-    if (qty > 0) {
-        ctx.fillText(qty.toString(), 445, 685);
-    }
+// Quantity
+const qty = parseFloat(document.getElementById('quantity').value) || 0;
+if (qty > 0) {
+    ctx.fillText(qty.toString(), 445, 685);
+}
 
-    // Rate
-    const rate = parseFloat(document.getElementById('rate').value) || 0;
-    if (rate > 0) {
-        ctx.fillText('₹' + rate, 600, 685);
-    }
+// Rate
+const rate = parseFloat(document.getElementById('rate').value) || 0;
+if (rate > 0) {
+    ctx.fillText('₹' + rate, 600, 685);
+}
 
-    // Toy Total
-    const toyTotal = qty * rate;
-    if (toyTotal > 0) {
-        ctx.fillText('₹' + toyTotal, 750, 685);
-    }
+// Toy Total (qty * rate)
+const toyTotal = qty * rate;
+if (toyTotal > 0) {
+    ctx.fillText('₹' + toyTotal, 750, 685);
+}
 
-    // Dispatch Row
-    const dispatchCharge = parseFloat(document.getElementById('dispatchCharge').value) || 0;
-    const dispatchTotal = dispatchCharge;  // Total for dispatch = charge
+// Discount Calculation (qty-based: 1% for qty 1, 2% for qty 2, etc.)
+const discountPercent = qty; // 1% per quantity
+const discountAmount = (toyTotal * discountPercent) / 100;
+const subtotal = toyTotal - discountAmount;
 
-    // No QTY for dispatch (as removed)
+// Discount Row - Show discount percentage
+if (discountPercent > 0) {
+    ctx.font = 'bold 26px Montserrat';
+    ctx.fillStyle = '#00bf63';
+    ctx.fillText(discountPercent + '%', 445, 750); // QTY column mein percentage
+    
+    // Discount amount in TOTAL column
+    ctx.font = 'bold 26px Montserrat';
+    ctx.fillStyle = '#00bf63'; // Red color for discount
+    ctx.fillText('-' + discountAmount.toFixed(0) + '₹', 600, 750);
+    ctx.fillStyle = '#163d44'; // Reset color
+}
 
-    // Total for dispatch = dispatch charge
-    if (dispatchTotal > 0) {
-        ctx.font = 'bold 26px Arial';
-        ctx.fillStyle = '#163d44';
-        ctx.fillText('₹' + dispatchTotal, 445, 750);
-        ctx.fillStyle = '#163d44';
-        ctx.font = '24px Arial';
-    }
+// Grand Total - 1st place: Niche right side pe
+if (subtotal > 0) {
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 28px Montserrat';
+    ctx.fillStyle = '#00bf63';
+    ctx.fillText('₹' + subtotal.toFixed(0), 780, 750);
+}
 
-    // Rate column for dispatch = toy rate
-    if (rate > 0) {
-        ctx.font = 'bold 24px Arial';
-        ctx.fillText('₹' + rate, 600, 750);
-    }
+// Dispatch/Handling Charge Row
+const dispatchCharge = parseFloat(document.getElementById('dispatchCharge').value) || 0;
 
-    // Transaction ID
-    ctx.textAlign = 'left';
-    const transactionId = document.getElementById('transactionId').value;
-    if (transactionId) {
-        ctx.font = '24px Arial';
-        ctx.fillText(transactionId, 260, 975);
-    }
+if (dispatchCharge > 0) {
+    ctx.font = 'bold 26px Montserrat';
+    ctx.fillStyle = '#163d44';
+    ctx.fillText('₹' + dispatchCharge, 445, 815); // TOTAL column mein dispatch charge
+}
 
-    // Grand Total - 1st place: Niche right side pe (already hai tune)
-const grandTotal = toyTotal + dispatchCharge;  // ya jo bhi variable tu use kar raha hai
+// Transaction ID
+ctx.textAlign = 'left';
+const transactionId = document.getElementById('transactionId').value;
+if (transactionId) {
+    ctx.font = '24px Montserrat';
+    ctx.fillText(transactionId, 260, 975);
+}
 
+// Grand Total Calculation (subtotal + dispatch charge)
+const grandTotal = subtotal + dispatchCharge;
+
+// Grand Total - 1st place: Niche right side pe
 if (grandTotal > 0) {
     ctx.textAlign = 'right';
-    ctx.font = 'bold 52px Arial';
-    ctx.fillStyle = '#008000';
-    ctx.fillText('₹' + grandTotal, 820, 1000);  // Ye pehla wala (niche)
+    ctx.font = 'bold 52px Montserrat';
+    ctx.fillStyle = '#00bf63';
+    ctx.fillText('₹' + grandTotal.toFixed(0), 820, 1000);
 }
 
-// Grand Total - 2nd place: Table ke TOTAL column mein dispatch row pe
-if (grandTotal > 0) {
-    ctx.textAlign = 'center';  // Kyuki table mein center aligned hai
-    ctx.font = 'bold 26px Arial';  // Table ke dispatch total jaisa size
-    ctx.fillStyle = '#008000';     // Green
-    ctx.fillText('₹' + grandTotal, 750, 750);  // Ye dispatch row ka TOTAL column coordinate
-    ctx.fillStyle = '#163d44';  // Reset color for safety
+// Grand Total - 2nd place: Table ke end mein (optional - agar chahiye to)
+// Agar table mein bhi grand total chahiye, to yeh uncomment kar dena:
+
+// Grand Total - 1st place: Niche right side pe
+// Grand Total - 1st place: Niche right side pe
+if (subtotal > 0) {
+    ctx.textAlign = 'right';
+    ctx.font = 'bold 28px Montserrat';
+    ctx.fillStyle = '#00bf63';
+    ctx.fillText('₹' + subtotal.toFixed(0), 630, 820);
 }
+
+if (grandTotal > 0) {
+    ctx.textAlign = 'center';
+    ctx.font = 'bold 28px Montserrat';
+    ctx.fillStyle = '#00bf63';
+    ctx.fillText('₹' + grandTotal.toFixed(0), 750, 820); // Adjust Y position as needed
+    ctx.fillStyle = '#163d44';
 }
 
 function wrapText(text, maxWidth) {
     const words = text.split(' ');
     const lines = [];
     let currentLine = '';
-    ctx.font = '24px Arial';
+    ctx.font = '24px Montserrat';
     for (let word of words) {
         const testLine = currentLine + word + ' ';
         if (ctx.measureText(testLine).width > maxWidth && currentLine !== '') {
@@ -178,6 +215,7 @@ function wrapText(text, maxWidth) {
     }
     lines.push(currentLine.trim());
     return lines;
+}
 }
 
 function downloadInvoice() {
@@ -209,7 +247,7 @@ function downloadInvoice() {
     link.href = canvas.toDataURL('image/png', 1.0);
     link.click();
 
-    alert('Invoice downloaded successfully! ✓');
+    alert('Invoice downloaded successfully! ✔');
 }
 
 // History functions (same as before)
