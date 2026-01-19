@@ -157,7 +157,7 @@ const dispatchCharge = parseFloat(document.getElementById('dispatchCharge').valu
 if (dispatchCharge > 0) {
     ctx.font = 'bold 26px Montserrat';
     ctx.fillStyle = '#163d44';
-    ctx.fillText('₹' + dispatchCharge, 445, 815); // TOTAL column mein dispatch charge
+    ctx.fillText('₹' + dispatchCharge, 460, 815); // TOTAL column mein dispatch charge
 }
 
 // Transaction ID
@@ -182,7 +182,6 @@ if (grandTotal > 0) {
 // Grand Total - 2nd place: Table ke end mein (optional - agar chahiye to)
 // Agar table mein bhi grand total chahiye, to yeh uncomment kar dena:
 
-// Grand Total - 1st place: Niche right side pe
 // Grand Total - 1st place: Niche right side pe
 if (subtotal > 0) {
     ctx.textAlign = 'right';
